@@ -17,8 +17,8 @@ class Game {
     __players = [];
     __scoreboard = new Scoreboard();
 
-    getPlayers() {
-        return this.__players;
+    getPlayer(playerName) {
+        return this.__players.find(p => p.name = playerName);
     }
 
     addPlayer(player) {
@@ -63,16 +63,27 @@ class Scoreboard {
 }
 
 
-const player1 = new Player('Player 1');
-player1.setScore(20);
-const player2 = new Player('Player 2');
-player2.setScore(15);
-const player3 = new Player('Player 3');
-player3.setScore(35);
-
-
 const game = new Game();
+
+game.addPlayer(new Player('Player 1'));
+game.getPlayer('Player 1').setScore(20)
 console.log(game.getScoreboard());
+
+game.addPlayer(new Player('Player 2'));
+game.getPlayer('Player 2').setScore(35)
+console.log(game.getScoreboard());
+
+
+game.addPlayer(new Player('Player 3'));
+game.getPlayer('Player 3').setScore(30)
+console.log(game.getScoreboard());
+
+
+// Updating score of player 1 to demonstrate how scoreboard changes
+game.getPlayer('Player 1').setScore(50);
+console.log(game.getScoreboard());
+
+
 
 
 
