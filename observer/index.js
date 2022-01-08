@@ -1,43 +1,5 @@
-const EventEmitter = require('events').EventEmitter;
-
-class Topic extends EventEmitter {
-    constructor(topicName) {
-        super();
-        this.topicName = topicName;
-    }
-
-    notify(message) {
-        console.log(`Topic "${this.topicName}" saying: ${message}`);
-        this.emit(this.topicName, message);
-    }
-}
-
-class User {
-
-    suscriptions = [];
-
-    constructor(userName) {
-        this.__userName = userName;
-    }
-    
-    getUserName() {
-        return this.__userName;
-    }
-
-    suscribeToTopic(topic) {
-        topic.on(topic.topicName, (message) => this.getNotificationFromTopic(message))
-        this.suscriptions.push(topic);
-        
-    }
-
-    addMessageToTopic(topic, message) {
-        topic.emit('newMessage', message);
-    }
-
-    getNotificationFromTopic(message) {
-        console.log(`User ${this.getUserName()} has a message from topic: ${message}`)
-    }
-}
+const Topic = require('./topic');
+const User = require('./user');
 
 // Creating topics and listening events to send message to users
 const topic1 = new Topic('Topic1');
