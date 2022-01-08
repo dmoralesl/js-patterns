@@ -1,47 +1,35 @@
-const Middleware = require("./_middleware_class");
+class Middleware {
+  constructor(target) {
+    this.target = target;
+    this.middlewares = [];
+    this.req = {};
 
-class Maths {
-  add({a, b}) {
-    return a + b;
+    const prototype = Object.getPrototypeOf(this.target);
+    Object.getOwnPropertyNames(prototype).forEach(fn => {
+      if (fn !== "constructor") return this.createFn(fn);
+    });
   }
-  subtract({a, b}) {
-    return a - b;
+
+  use(middleware) {
+    this.middlewares.push(middleware);
   }
-  multiply({a, b}) {
-    return a * b;
+
+  executeMiddleware(i = 0) {
+    if (i < this.middlewares.length) {
+      this.middlewares[i].call(this, this.req, () =>
+        this.executeMiddleware(i + 1)
+      );
+    }
   }
+
+  createFn(fn) {
+    this[fn] = args => {
+      this.req = args;
+      this.executeMiddleware();
+      return this.target[fn].call(this, this.req);
+    };
+  }
+  
 }
 
-const calculator = new Maths();
-const app = new Middleware(calculator);
-
-app.use((req, next) => {
-  console.log(`Square number. Initial values a->${req.a} and b->${req.b} `);
-  req.a = req.a ** 2;
-  req.b = req.b ** 2;
-  console.log(`Result values to a->${req.a} and b->${req.b} `);
-  next();
-});
-
-app.use((req, next) => {
-  console.log(`Cube number. Initial values a->${req.a} and b->${req.b} `);
-  req.a = req.a ** 3;
-  req.b = req.b ** 3;
-  console.log(`Result values to a->${req.a} and b->${req.b} `);
-  next();
-});
-
-app.use((req, next) => {
-  console.log(`Division 2. Initial values a->${req.a} and b->${req.b} `);
-  req.a = req.a / 2;
-  req.b = req.b / 2;
-  console.log(`Result values to a->${req.a} and b->${req.b} `);
-  next();
-});
-
-console.log('Calling add method of Math class');
-console.log(`Final value -->${app.add({a: 5, b: 10})}`)
-console.log('Calling substract method of Math class');
-console.log(`Final value -->${app.subtract({a: 10, b: 6})}`)
-console.log('Calling multiply method of Math Class');
-console.log(`Final value -->${app.multiply({a: 2, b: 3})}`)
+module.exports = Middleware;
