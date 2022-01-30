@@ -1,39 +1,33 @@
-const Printer = require('./decorator');
-
-const yellowStyle = (printer) => {
-    const decorator = copyObj(printer);
-
-    decorator.print = (text, color) => {
-        printer.print(text, '\x1b[33m%s\x1b[0m');
+const convertArticleCurrency = require('./decorator');
+class Article {
+    constructor(title, price, currency) {
+        this.title = title;
+        this.price = price;
+        this.currency = currency;
     }
-    return decorator;
 
-};
-
-const cyanStyle = (printer) => {
-    const decorator = copyObj(printer);
-
-    decorator.print = (text, color) => {
-        printer.print(text, '\x1b[36m%s\x1b[0m');
+    getInfo() {
+        return `${this.title} costs ${this.price} ${this.currency}`;
     }
-    return decorator;
-
-};
-
-const copyObj = (originObj) => {
-    const originPrototype = Object.getPrototypeOf(originObj);
-    let newObj = Object.create(originPrototype);
-
-    const originObjOwnProperties = Object.getOwnPropertyNames(originObj);
-    originObjOwnProperties.forEach((property) => {
-        const prototypeDesc = Object.getOwnPropertyDescriptor(originObj, property);
-        Object.defineProperty(newObj, property, prototypeDesc);
-    });
-
-    return newObj;
 }
 
-const printerA = yellowStyle(new Printer());
-printerA.print('Something in yellow color');
-const printerB = cyanStyle(new Printer());
-printerB.print('Another text in cyan color');
+const article1 = new Article('Comic', 10, 'USD');
+const article2 = new Article('Smarpthone', 28, 'GBP');
+const article3 = new Article('House', 15000000, 'CNY');
+
+console.log(article1.getInfo());
+const article1Converted = convertArticleCurrency(article1);
+console.log(article1Converted.getInfo());
+
+console.log('\n\n');
+
+console.log(article2.getInfo());
+const article2Converted = convertArticleCurrency(article2);
+console.log(article2Converted.getInfo());
+
+console.log('\n\n');
+
+console.log(article3.getInfo());
+const article3Converted = convertArticleCurrency(article3);
+console.log(article3Converted.getInfo());
+
