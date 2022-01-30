@@ -4,7 +4,7 @@ connect('amqp://localhost')
   .then((conn) => {
     process.once('SIGINT', () => { conn.close(); });
     return conn.createChannel().then((ch) => {
-      const ok = ch.assertExchange('TestQueue', 'fanout', {durable: false});
+      let ok = ch.assertExchange('TestQueue', 'fanout', {durable: false});
       ok = ok.then(() => {
         return ch.assertQueue('', {exclusive: true});
       });
